@@ -1,0 +1,113 @@
+# Copyright (c) 2020, Oracle and/or its affiliates. All rights reserved.
+# Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
+
+title: "Quick start to move logs from Oracle Streaming service to OCI Logging / DataDog / ElasticSearch"
+stackDescription: "A Quick start which will setup the fluentD instance, install required plugins and create necessary configuration files."
+schemaVersion: 1.1.0
+version: "20200301"
+locale: "en"
+
+variableGroups:
+- title: ${Messages.solutionsHub.generalConfig()}
+  visible: false
+  variables:
+  - tenancy_ocid
+  - current_user_ocid
+  - fingerprint
+  - private_key_path
+  - VCN-CIDR
+  - instance_os
+  - linux_os_version
+  - instance_flex_shape_ocpus
+  - instance_flex_shape_memory
+  - instance_shape
+  - generate_public_ssh_key
+  - ssh_public_key
+  - public_ssh_key
+  - private_ssh_key_path
+
+- title: ${Messages.solutionsHub.requiredConfig()}
+  visible: true  
+  variables:
+  - compartment_ocid
+  - region
+  - stream_pool_name
+  - stream_name
+  - stream_partitions
+  - fluentD_output_plugin
+
+- title: OCI Logging config
+  visible:
+    and:
+      - or:
+        - eq:
+          - fluentD_output_plugin
+          - "OCI_LOGGING"
+  variables:
+  - log_group_display_name
+  - log_display_name
+
+- title: Data Dog config
+  visible:
+    and:
+      - or:
+        - eq:
+          - fluentD_output_plugin
+          - "DATA_DOG"
+  variables:
+  - data_dog_api_key
+
+variables:
+
+  compartment_ocid:
+    type: oci:identity:compartment:id
+    required: true
+    title: ${Messages.solutionsHub.genericVariables.compartment.title()}
+    description: ${Messages.solutionsHub.genericVariables.compartment.description()}
+
+  region:
+    type: oci:identity:region:name
+    required: true
+    title: "Region"
+    description: "Region where the stack will be deployed."
+
+  stream_pool_name:
+    type: string
+    required: false
+    title: "Stream pool name"
+
+  stream_name:
+    type: string
+    required: true
+    title: "Stream name"
+
+  stream_partitions:
+    type: number
+    description: "No of partitions in the stream"
+    title: "Stream Partitions"
+    required: true
+
+  fluentD_output_plugin:
+    type: enum
+    title: "Log destination"
+    default: "OCI_LOGGING"
+    enum:
+      - OCI_LOGGING
+      - DATA_DOG
+
+  log_group_display_name:
+    type: string
+    required: true
+    title: "Log Group name"
+
+  log_display_name:
+    type: string
+    required: true
+    title: "Custom Log name"
+    visible: fluentD_output_plugin eq OCI_LOGGING
+
+  data_dog_api_key:
+    type: string
+    description: "Data Dog API key for authentication"
+    title: "Data Dog API Key"
+    required: true
