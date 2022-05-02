@@ -37,6 +37,33 @@ variable "data_dog_api_key" {
   default = ""
 }
 
+variable "new_relic_api_key" {
+  default = ""
+}
+
+variable "dyna_trace_api_key" {
+  default = ""
+}
+
+variable "dyna_trace_host_name" {
+  default = ""
+}
+
+variable "es_host" {
+  default = ""
+}
+
+variable "es_port" {
+  default = "9200"
+}
+
+variable "es_username" {
+  default = ""
+}
+variable "es_pass" {
+  default = ""
+}
+
 variable "VCN-CIDR" {
   default = "10.0.0.0/16"
 }

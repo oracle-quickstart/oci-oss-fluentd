@@ -1,8 +1,8 @@
 # Copyright (c) 2020, Oracle and/or its affiliates. All rights reserved.
 # Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
 
-title: "Quick start to move logs from Oracle Streaming service to OCI Logging / DataDog / ElasticSearch"
-stackDescription: "A Quick start which will setup the fluentD instance, install required plugins and create necessary configuration files."
+title: "Quick start to move logs from Oracle Streaming service to OCI Logging / DataDog / New Relic / Dyna Trace / ElasticSearch"
+stackDescription: "This Quick start will setup a fluentD instance in a public subnet of a VCN, install required plugins and create necessary configuration files to connect and move logs grom stream to the target."
 schemaVersion: 1.1.0
 version: "20200301"
 locale: "en"
@@ -57,6 +57,40 @@ variableGroups:
   variables:
   - data_dog_api_key
 
+- title: New Relic config
+  visible:
+    and:
+      - or:
+        - eq:
+          - fluentD_output_plugin
+          - "NEW_RELIC"
+  variables:
+  - new_relic_api_key
+
+- title: Elastic Search config
+  visible:
+    and:
+      - or:
+        - eq:
+          - fluentD_output_plugin
+          - "ELASTIC_SEARCH"
+  variables:
+  - es_host
+  - es_port
+  - es_username
+  - es_pass
+
+- title: Dyna Trace config
+  visible:
+    and:
+      - or:
+        - eq:
+          - fluentD_output_plugin
+          - "DYNA_TRACE"
+  variables:
+  - dyna_trace_host_name
+  - dyna_trace_api_key
+
 variables:
 
   compartment_ocid:
@@ -90,10 +124,14 @@ variables:
   fluentD_output_plugin:
     type: enum
     title: "Log destination"
+    required: true
     default: "OCI_LOGGING"
     enum:
       - OCI_LOGGING
       - DATA_DOG
+      - NEW_RELIC
+      - DYNA_TRACE
+      - ELASTIC_SEARCH
 
   log_group_display_name:
     type: string
@@ -104,10 +142,46 @@ variables:
     type: string
     required: true
     title: "Custom Log name"
-    visible: fluentD_output_plugin eq OCI_LOGGING
 
   data_dog_api_key:
     type: string
     description: "Data Dog API key for authentication"
     title: "Data Dog API Key"
     required: true
+
+  new_relic_api_key:
+    type: string
+    description: "New Relic API key for authentication"
+    title: "New Relic API Key"
+    required: true
+
+  es_host:
+    type: string
+    required: true
+    title: "Elastic Search host"
+    
+  es_port:
+    type: string
+    required: true
+    title: "Elastic Search port"
+
+  es_username:
+    type: string
+    required: true
+    title: "Elastic Search username"
+
+  es_pass:
+    type: string
+    required: true
+    title: "Elastic Search password"
+    
+  dyna_trace_host_name:
+    type: string
+    required: true
+    title: "DynaTrace host name"
+
+  dyna_trace_api_key:
+    type: string
+    required: true
+    title: "DynaTrace API Key"
+
